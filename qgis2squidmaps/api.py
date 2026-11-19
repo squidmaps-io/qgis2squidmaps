@@ -42,6 +42,8 @@ def preview_url(map_id, width=1200, height=630, base=API_BASE):
 
 
 def _request(method, url, document, token=None):
+    if not url.lower().startswith(("https://", "http://")):
+        raise SquidmapsError(None, "Not an http(s) URL: {}".format(url))
     body = json.dumps(document, ensure_ascii=False).encode("utf-8")
     headers = {
         "Content-Type": "application/json",
@@ -111,16 +113,18 @@ def _send_urllib(method, url, body, headers):
     import urllib.error
     import urllib.request
 
-    context = None
     try:
         import certifi
-        context = ssl.create_default_context(cafile=certifi.where())
     except ImportError:
-        pass
+        certifi = None
+    context = (ssl.create_default_context(cafile=certifi.where())
+               if certifi else None)
     request = urllib.request.Request(url, data=body, headers=headers,
                                      method=method)
     try:
-        with urllib.request.urlopen(request, timeout=60,
+        # The scheme is checked in _request, so file:// and custom schemes
+        # never get here.
+        with urllib.request.urlopen(request, timeout=60,  # nosec B310
                                     context=context) as response:
             return response.status, response.read()
     except urllib.error.HTTPError as e:

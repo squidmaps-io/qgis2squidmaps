@@ -135,11 +135,8 @@ def xyz_basemap_for(layer):
     url = uri.get("url", "")
     tms = "{-y}" in url
     url = url.replace("{-y}", "{y}")
-    opacity = 1.0
-    try:
-        opacity = layer.renderer().opacity()
-    except Exception:
-        pass
+    renderer = layer.renderer()
+    opacity = renderer.opacity() if renderer is not None else 1.0
     return document.xyz_basemap(layer.name(), url, opacity, tms)
 
 
@@ -184,10 +181,11 @@ def json_value(value):
     for method in ("toPyDateTime", "toPyDate", "toPyTime"):
         fn = getattr(value, method, None)
         if callable(fn):
-            try:
-                return fn().isoformat()
-            except Exception:
-                pass
+            # An invalid QDate/QDateTime/QTime has no Python equivalent.
+            is_valid = getattr(value, "isValid", None)
+            if callable(is_valid) and not is_valid():
+                return None
+            return fn().isoformat()
     try:
         json.dumps(value)
         return value
