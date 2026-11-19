@@ -95,10 +95,22 @@ def is_hidden_field(layer, index):
     return layer.editorWidgetSetup(index).type() == "Hidden"
 
 
-def default_popup_fields(layer):
-    """Every field not hidden in the attribute form, as qgis2web does."""
+def is_key_field(layer, index):
+    """The provider's feature id column, such as a GeoPackage's fid."""
+    return index in layer.primaryKeyAttributes()
+
+
+def popup_field_choices(layer):
+    """Fields worth offering in a popup: all but the feature id column."""
     return [f.name() for i, f in enumerate(layer.fields())
-            if not is_hidden_field(layer, i)]
+            if not is_key_field(layer, i)]
+
+
+def default_popup_fields(layer):
+    """Every field not hidden in the attribute form, as qgis2web does,
+    leaving out the feature id column."""
+    return [f.name() for i, f in enumerate(layer.fields())
+            if not is_hidden_field(layer, i) and not is_key_field(layer, i)]
 
 
 def exportable_layers(project=None):

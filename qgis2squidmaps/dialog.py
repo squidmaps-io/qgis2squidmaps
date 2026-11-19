@@ -62,6 +62,7 @@ class FieldsDialog(QDialog):
     def __init__(self, layer, selected, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Popup fields: {}".format(layer.name()))
+        self.choices = set(exporter.popup_field_choices(layer))
         self.list = QListWidget()
         for i, field in enumerate(layer.fields()):
             alias = layer.attributeDisplayName(i)
@@ -91,8 +92,11 @@ class FieldsDialog(QDialog):
         layout.addWidget(buttons)
 
     def _set_all(self, state):
+        # "All" leaves out the feature id column (fid); tick it by hand.
         for i in range(self.list.count()):
-            self.list.item(i).setCheckState(state)
+            item = self.list.item(i)
+            skip = item.data(USER_ROLE) not in self.choices
+            item.setCheckState(UNCHECKED if skip else state)
 
     def selected(self):
         return [self.list.item(i).data(USER_ROLE)
@@ -286,10 +290,12 @@ class MainDialog(QDialog):
             self._label_fields_button(layer, button)
 
     def _label_fields_button(self, layer, button):
-        chosen = len(self.popup_fields[layer.id()])
+        chosen = self.popup_fields[layer.id()]
+        choices = exporter.popup_field_choices(layer)
         total = layer.fields().count()
-        button.setText("All ({})".format(total) if chosen == total
-                       else "{} of {}".format(chosen, total))
+        button.setText("All ({})".format(len(choices))
+                       if set(chosen) == set(choices)
+                       else "{} of {}".format(len(chosen), total))
 
     # --- collecting options -------------------------------------------------
 
