@@ -2,7 +2,6 @@
 name=qgis2squidmaps
 qgisMinimumVersion=3.22
 qgisMaximumVersion=4.99
-supportsQt6=True
 description=Publish your QGIS project as a squidmaps web map
 about=Turns the vector layers of a QGIS project into a squidmaps map, with the layers' styles (single, categorized, graduated and rule-based), popups, labels, legend, basemap and extent, and sends it to squidmaps to get a link you can share. No hosting or HTML needed. The link lasts an hour after the last change; open it to add the map to your squidmaps account and keep it. Inspired by qgis2web.
     Requires an internet connection: the plugin sends the exported map document (features, attributes and styles) to the squidmaps.io API (https://squidmaps.io/docs/api/ephemeral-maps). No account is needed. Maps you don't add to an account expire an hour after their last change.
