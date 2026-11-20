@@ -15,7 +15,8 @@ you to host. This plugin writes one
 The plugin is in the official QGIS plugin repository:
 [plugins.qgis.org/plugins/qgis2squidmaps](https://plugins.qgis.org/plugins/qgis2squidmaps/).
 In QGIS, open **Plugins ▸ Manage and Install Plugins**, search for
-**qgis2squidmaps** and click **Install Plugin**.
+**qgis2squidmaps** and click **Install Plugin**. The plugin's home page is
+[squidmaps.io/integrations/qgis](https://squidmaps.io/integrations/qgis).
 
 ## Using it
 
